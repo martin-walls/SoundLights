@@ -47,13 +47,13 @@ void loop() {
     //     brightness = 255;
     // }
 
-    Serial.println(brightness);
-
+    // clipping
     if (brightness < 0L) {
         brightness = 0;
     } else if (brightness > MAX_BRIGHTNESS) {
         brightness = MAX_BRIGHTNESS;
     }
+    Serial.println(brightness);
 
     for (int i = 0; i < NUM_PIXELS; i++) {
         pixels.setPixelColor(i, brightness, brightness, brightness);
