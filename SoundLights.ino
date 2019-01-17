@@ -36,11 +36,11 @@ void loop() {
     val = analogRead(MIC_PIN);
     val = abs(val - DC_OFFSET); // center on 0
     val = (val <= NOISE) ? 0 : (val - NOISE);
-    lvl = ((lvl * 15) + val) >> 4; // dampen reading
+    lvl = ((lvl * 7) + val) >> 3; // dampen reading
 
     // brightness = MAX_BRIGHTNESS * (lvl - minLvlAvg) / (long)(maxLvlAvg - minLvlAvg);
 
-    brightness = map(lvl, 0, 1023, 0, 255);
+    brightness = map(lvl, 0, 1023, 0, 255) * 5;
 
     // brightness = val;
     // if (brightness > 255) {
@@ -60,33 +60,33 @@ void loop() {
     }
     pixels.show();
 
-    vol[volCount] = val; // save sample for dynamic leveling
-    if (++volCount >= SAMPLES) {
-        volCount = 0;
-    }
-
-    // maxLvl = vol[0];
-    // for (int i = 0; i < SAMPLES; i++) {
-    //     if (vol[i] > maxLvl) {
+    // vol[volCount] = val; // save sample for dynamic leveling
+    // if (++volCount >= SAMPLES) {
+    //     volCount = 0;
+    // }
+    //
+    // // maxLvl = vol[0];
+    // // for (int i = 0; i < SAMPLES; i++) {
+    // //     if (vol[i] > maxLvl) {
+    // //         maxLvl = vol[i];
+    // //     }
+    // // }
+    //
+    //
+    // // get volume range of previous frames
+    // minLvl = maxLvl = vol[0];
+    // for (i = 1; i < SAMPLES; i++) {
+    //     if (vol[i] < minLvl) {
+    //         minLvl = vol[i];
+    //     } else if (vol[i] > maxLvl) {
     //         maxLvl = vol[i];
     //     }
     // }
-
-
-    // get volume range of previous frames
-    minLvl = maxLvl = vol[0];
-    for (i = 1; i < SAMPLES; i++) {
-        if (vol[i] < minLvl) {
-            minLvl = vol[i];
-        } else if (vol[i] > maxLvl) {
-            maxLvl = vol[i];
-        }
-    }
-
-    if ((maxLvl - minLvl) < MAX_BRIGHTNESS) {
-        maxLvl = minLvl + MAX_BRIGHTNESS;
-    }
-
-    minLvlAvg = (minLvlAvg * 63 + minLvl) >> 6;
-    maxLvlAvg = (maxLvlAvg * 63 + maxLvl) >> 6;
+    //
+    // if ((maxLvl - minLvl) < MAX_BRIGHTNESS) {
+    //     maxLvl = minLvl + MAX_BRIGHTNESS;
+    // }
+    //
+    // minLvlAvg = (minLvlAvg * 63 + minLvl) >> 6;
+    // maxLvlAvg = (maxLvlAvg * 63 + maxLvl) >> 6;
 }
