@@ -36,7 +36,7 @@ void loop() {
     val = analogRead(MIC_PIN);
     val = abs(val - DC_OFFSET); // center on 0
     val = (val <= NOISE) ? 0 : (val - NOISE);
-    lvl = ((lvl * 7) + val) >> 3; // dampen reading
+    lvl = ((lvl * 15) + val) >> 4; // dampen reading
 
     // brightness = MAX_BRIGHTNESS * (lvl - minLvlAvg) / (long)(maxLvlAvg - minLvlAvg);
 
