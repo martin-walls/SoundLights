@@ -60,6 +60,9 @@ void loop() {
     }
     pixels.show();
 
+    // add small delay to help smooth output and make it less jittery
+    delay(5);
+
     // vol[volCount] = val; // save sample for dynamic leveling
     // if (++volCount >= SAMPLES) {
     //     volCount = 0;
