@@ -43,8 +43,8 @@ void loop() {
 
     // brightness = MAX_BRIGHTNESS * (lvl - minLvlAvg) / (long)(maxLvlAvg - minLvlAvg);
 
-    if (lvl > localPeak || millis() - localPeakTick > 50) {
-        localPeak = (localPeak + lvl) >> 1;
+    if (lvl > localPeak || millis() - localPeakTick > 5) {
+        localPeak = ((localPeak * 3) + lvl) >> 2;
         localPeakTick = millis();
     }
 
