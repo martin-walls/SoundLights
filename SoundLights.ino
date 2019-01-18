@@ -27,7 +27,6 @@ void loop() {
     int val, brightness;
 
     val = analogRead(MIC_PIN);
-    Serial.println(val);
     val = abs(val - DC_OFFSET); // center on 0
     val = (val <= NOISE) ? 0 : (val - NOISE);
     lvl = ((lvl * 7) + val) >> 3; // dampen reading
@@ -40,16 +39,17 @@ void loop() {
         localPeakTick = millis();
     }
 
-    // int pot_val = analogRead(POT_PIN);
-    // if (abs(maxLvl - pot_val) > 10) {
-    //     maxLvl = pot_val;
-    // }
-    // if (maxLvl < MIN_TOP) {
-    //     maxLvl = MIN_TOP;
-    // }
+    int potVal = analogRead(POT_PIN);
+    if (abs(maxLvl - potVal) > 10) {
+        maxLvl = potVal;
+    }
+    if (maxLvl < MIN_TOP) {
+        maxLvl = MIN_TOP;
+    }
 
-    brightness = map(localPeak, 0, 70, 0, 255);
+    brightness = map(localPeak, 0, maxLvl, 0, 255);
 
+    Serial.println(lvl);
     // brightness = val;
     // if (brightness > 255) {
     //     brightness = 255;
