@@ -40,7 +40,7 @@ void loop() {
 
     // brightness = MAX_BRIGHTNESS * (lvl - minLvlAvg) / (long)(maxLvlAvg - minLvlAvg);
 
-    brightness = map(lvl, 0, 1023, 0, 255) * 5;
+    brightness = map(lvl, 0, 100, 0, 255);
 
     // brightness = val;
     // if (brightness > 255) {
@@ -53,7 +53,7 @@ void loop() {
     } else if (brightness > MAX_BRIGHTNESS) {
         brightness = MAX_BRIGHTNESS;
     }
-    Serial.println(brightness);
+    Serial.println(val);
 
     for (int i = 0; i < NUM_PIXELS; i++) {
         pixels.setPixelColor(i, brightness, brightness, brightness);
