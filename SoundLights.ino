@@ -17,8 +17,12 @@ int
     maxLvlAvg = 0,
     localPeak = 0,
     localPeakTick = 0,
+<<<<<<< HEAD
     maxLvl = 0,
     maxLvlTick = 0;
+=======
+    maxLvl = 0;
+>>>>>>> parent of f9c74bf... debugging changes
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_PIXELS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -40,6 +44,11 @@ void loop() {
     val = (val <= NOISE) ? 0 : (val - NOISE);
     lvl = ((lvl * 7) + val) >> 3; // dampen reading
 
+<<<<<<< HEAD
+=======
+    // brightness = MAX_BRIGHTNESS * (lvl - minLvlAvg) / (long)(maxLvlAvg - minLvlAvg);
+
+>>>>>>> parent of f9c74bf... debugging changes
     if (lvl > localPeak || millis() - localPeakTick > 5) {
         samples[samplePos] = localPeak;
         if (++samplePos > NUM_SAMPLES) {
@@ -56,10 +65,16 @@ void loop() {
     if (maxLvl < MIN_TOP) {
         maxLvl = MIN_TOP;
     }
+<<<<<<< HEAD
 
     brightness = MAX_BRIGHTNESS * (lvl) / (maxLvlAvg);
 
     // brightness = map(localPeak, 0, maxLvl, 0, 255);
+=======
+
+
+    brightness = map(localPeak, 0, maxLvl, 0, 255);
+>>>>>>> parent of f9c74bf... debugging changes
 
     // brightness = val;
     // if (brightness > 255) {
@@ -73,12 +88,17 @@ void loop() {
         brightness = MAX_BRIGHTNESS;
     }
 
+    Serial.println(brightness);
 
     for (int i = 0; i < NUM_PIXELS; i++) {
         pixels.setPixelColor(i, brightness, brightness, brightness);
     }
     pixels.show();
+<<<<<<< HEAD
 
+=======
+}
+>>>>>>> parent of f9c74bf... debugging changes
 
     maxLvl = samples[0];
     for (int i = 1; i < NUM_SAMPLES; i++) {
