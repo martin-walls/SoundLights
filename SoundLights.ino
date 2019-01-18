@@ -5,7 +5,6 @@ const int NUM_PIXELS = 12;
 const int MIC_PIN = 0;
 const int DC_OFFSET = 330;
 const int NOISE = 10;
-const int GAIN = 10;
 const int SAMPLES = 5;
 const int MAX_BRIGHTNESS = 255;
 
@@ -14,7 +13,11 @@ int
     vol[SAMPLES],
     lvl = 10,
     minLvlAvg = 0,
-    maxLvlAvg = 0;
+    maxLvlAvg = 0,
+    localPeak = 0,
+    localPeakTick = 0,
+    maxVal = 0,
+    maxValTick = 0;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_PIXELS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -40,8 +43,15 @@ void loop() {
 
     // brightness = MAX_BRIGHTNESS * (lvl - minLvlAvg) / (long)(maxLvlAvg - minLvlAvg);
 
-    brightness = map(lvl, 0, 100, 0, 255);
+    if (lvl > localPeak || millis() - localPeakTick > 50) {
+        localPeak = (localPeak + lvl) >> 1;
+        localPeakTick = millis();
+    }
 
+
+    brightness = map(localPeak, 0, 100, 0, 255);
+
+    Serial.println(localPeak);
     // brightness = val;
     // if (brightness > 255) {
     //     brightness = 255;
@@ -53,15 +63,23 @@ void loop() {
     } else if (brightness > MAX_BRIGHTNESS) {
         brightness = MAX_BRIGHTNESS;
     }
-    Serial.println(val);
 
     for (int i = 0; i < NUM_PIXELS; i++) {
         pixels.setPixelColor(i, brightness, brightness, brightness);
     }
     pixels.show();
 
+
+    if (val > maxVal || millis() - maxValTick > 1000) {
+        maxVal = val;
+        maxValTick = millis();
+    }
+    if (maxVal < 10) {
+        maxVal = 10;
+    }
+
     // add small delay to help smooth output and make it less jittery
-    delay(5);
+    // delay(5);
 
     // vol[volCount] = val; // save sample for dynamic leveling
     // if (++volCount >= SAMPLES) {
