@@ -6,7 +6,7 @@ const int MIC_PIN = 0;
 const int POT_PIN = 1;
 const int DC_OFFSET = 330;
 const int NOISE = 10;
-const int NUM_SAMPLES = 100;
+const int NUM_SAMPLES = 50;
 const int MAX_BRIGHTNESS = 255;
 const int MIN_TOP = 70;
 
@@ -14,10 +14,11 @@ byte samplePos = 0;
 int
     samples[NUM_SAMPLES],
     lvl = 10,
-    minLvlAvg = 0,
+    maxLvlAvg = 0,
     localPeak = 0,
     localPeakTick = 0,
-    maxLvl = 0;
+    maxLvl = 0,
+    maxLvlTick = 0;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_PIXELS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -39,12 +40,7 @@ void loop() {
     val = (val <= NOISE) ? 0 : (val - NOISE);
     lvl = ((lvl * 7) + val) >> 3; // dampen reading
 
-    // brightness = MAX_BRIGHTNESS * (lvl - minLvlAvg) / (long)(maxLvlAvg - minLvlAvg);
-
-    if (lvl > localPeak) {
-        localPeak = ((localPeak * 3) + lvl) >> 2;
-        localPeakTick = millis();
-    } else if (millis() - localPeakTick > 5) {
+    if (lvl > localPeak || millis() - localPeakTick > 5) {
         samples[samplePos] = localPeak;
         if (++samplePos > NUM_SAMPLES) {
             samplePos = 0;
@@ -61,8 +57,9 @@ void loop() {
         maxLvl = MIN_TOP;
     }
 
+    brightness = MAX_BRIGHTNESS * (lvl) / (maxLvlAvg);
 
-    brightness = map(localPeak, 0, maxLvl, 0, 255);
+    // brightness = map(localPeak, 0, maxLvl, 0, 255);
 
     // brightness = val;
     // if (brightness > 255) {
@@ -75,7 +72,7 @@ void loop() {
     } else if (brightness > MAX_BRIGHTNESS) {
         brightness = MAX_BRIGHTNESS;
     }
-    Serial.println(maxLvl);
+
 
     for (int i = 0; i < NUM_PIXELS; i++) {
         pixels.setPixelColor(i, brightness, brightness, brightness);
@@ -83,21 +80,22 @@ void loop() {
     pixels.show();
 
 
-    // maxLvl = samples[0];
-    // for (int i = 1; i < NUM_SAMPLES; i++) {
-    //     if (samples[i] > maxLvl) {
-    //         maxLvl = samples[i];
-    //     }
-    // }
+    maxLvl = samples[0];
+    for (int i = 1; i < NUM_SAMPLES; i++) {
+        if (samples[i] > maxLvl) {
+            maxLvl = samples[i];
+        }
+    }
 
-    // if (lvl > maxVal || millis() - maxValTick > 2000) {
-    //     maxVal = lvl;
-    //     maxValTick = millis();
-    // }
-    // if (maxLvl < 10) {
-    //     maxLvl = 10;
-    // }
-    // maxLvlAvg = (maxLvlAvg * 63 + maxLvl) >> 6;
+    if (lvl > maxLvl || millis() - maxLvlTick > 2000) {
+        maxLvl = lvl;
+        maxLvlTick = millis();
+    }
+    if (maxLvl < 10) {
+        maxLvl = 10;
+    }
+    Serial.println(maxLvlAvg);
+    maxLvlAvg = (maxLvlAvg * 7 + maxLvl) >> 3;
 
     // add small delay to help smooth output and make it less jittery
     // delay(5);
