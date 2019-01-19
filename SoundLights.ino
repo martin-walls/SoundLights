@@ -8,12 +8,17 @@ const int DC_OFFSET = 330;
 const int NOISE = 10;
 const int MAX_BRIGHTNESS = 255;
 const int MIN_TOP = 70;
+const int COLOR_THRESHOLD = 200;
 
 int
     lvl = 10,
     localPeak = 0,
     localPeakTick = 0,
     maxLvl = 30;
+
+// byte wheelPos = 0;
+
+// bool colorChanged = false;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_PIXELS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -62,23 +67,31 @@ void loop() {
         brightness = MAX_BRIGHTNESS;
     }
 
+    // if (brightness == 0 && !colorChanged) {
+    //     wheelPos = (wheelPos + 30) % 255;
+    //     colorChanged = true;
+    // } else if (brightness > 0 && colorChanged) {
+    //     colorChanged = false;
+    // }
+
 
     for (int i = 0; i < NUM_PIXELS; i++) {
         pixels.setPixelColor(i, brightness, brightness, brightness);
     }
     pixels.show();
 
-    delay(1);
+    // delay(1);
 }
 
-uint32_t Wheel(byte WheelPos) {
-  if(WheelPos < 85) {
-   return pixels.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
-  } else if(WheelPos < 170) {
-   WheelPos -= 85;
-   return pixels.Color(255 - WheelPos * 3, 0, WheelPos * 3);
-  } else {
-   WheelPos -= 170;
-   return pixels.Color(0, WheelPos * 3, 255 - WheelPos * 3);
-  }
-}
+// uint32_t Wheel(byte WheelPos, int brightness) {
+//
+//     if(WheelPos < 85) {
+//         return pixels.Color((WheelPos * 3) * brightness/255, (255 - WheelPos * 3) * brightness/255, 0);
+//     } else if(WheelPos < 170) {
+//         WheelPos -= 85;
+//         return pixels.Color((255 - WheelPos * 3) * brightness/255, 0, (WheelPos * 3) * brightness/255);
+//     } else {
+//         WheelPos -= 170;
+//         return pixels.Color(0, (WheelPos * 3) * brightness/255, (255 - WheelPos * 3) * brightness/255);
+//     }
+// }
