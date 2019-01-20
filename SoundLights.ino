@@ -90,6 +90,7 @@ void loop() {
             pixels.setPixelColor(i, 0, 0, 0);
         }
         pixels.show();
+        delay(1000);
     }
 }
 
